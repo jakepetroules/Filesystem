@@ -37,6 +37,13 @@ class GameScene: SKScene {
         // Get label node from scene and store it for use later
         self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
         if let label = self.label {
+            var st = statfs()
+            statfs("/", &st)
+            label.text = withUnsafePointer(to: &st.f_fstypename, {
+                $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: st.f_fstypename), {
+                    String(cString: $0)
+                })
+            })
             label.alpha = 0.0
             label.run(SKAction.fadeIn(withDuration: 2.0))
         }
